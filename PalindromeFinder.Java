@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.Scanner;
 import java.io.*; 
 import java.util.logging.*;
+import java.math.*;
 
 public class PalindromeFinder {
 	public static void main(String[] args)	{
@@ -16,34 +17,26 @@ public class PalindromeFinder {
 
 		//Now lets sort the array.
 		try {
-			for(Word word: words)
-				Log.L(word.letters);
 			Collections.sort(words, Comparator.comparing(Word::getLetters)
 			.thenComparing(Word::getIsPalindrome));
-			Log.L("Finished sorting");
-			for(Word word: words)
-				Log.L(word.letters);
 		}
 		catch (Exception e){
 			Log.L("Failed to sort the collection: " + e.toString());
 		}
 
-		//Now lets write it to the console
-		//FoundFirstNonPalin is a flag that tells us when we need to
-		//print the newline character so that we split up the palindromes
-		//and the non palindromes
-		boolean foundFirstNonPalin = false;
+		//Now lets write the palindromes to the console
+		System.out.println("Printing all palindromes now:");
 		for(Word word: words) {
 			if(word.isPalindrome) {
 				System.out.println(word.letters);
 			}
-			else if(foundFirstNonPalin) {
-			 	System.out.println(word.letters);
-			}
-			else if(!foundFirstNonPalin)
-			{
-				System.out.println("\n \n");
-				System.out.println(word.letters);
+		}
+
+		//Now lets print the non-palindromes
+		System.out.println("Printing all non-palindromes now:");
+		for(Word word: words) {
+			if(!word.isPalindrome) {
+				System.out.println(word.letters + " : This failed when comparing letters: " + word.palindromeFailPoint);
 			}
 		}
 	}
@@ -84,11 +77,13 @@ public class PalindromeFinder {
 	static class Word {		
 		//Attributes
 		public String letters;
-		public Boolean isPalindrome;
+		public String palindromeFailPoint;
+		public Boolean isPalindrome = false;
 
 		//Constructor
 		public Word(String letters) {
-			this.letters = StripNonLetters(letters);
+			this.letters = StripNonLetters(letters.toLowerCase());
+			this.palindromeFailPoint = "";
 			CheckIfPalindrome();
 		}
 		//Methods
@@ -100,28 +95,40 @@ public class PalindromeFinder {
 		}
 		private void CheckIfPalindrome() {
 			//Setup
-			int i = 0;
-			int j = 0;
-			double stopPoint = GetMidPoint(this.letters);
 			try {
-				
-
-
-			}
-			catch(Exception e) {
+				int j = this.letters.length()-1;//Substract 1 so we don't got out of bounds
+				int stopPoint = GetStopPoint((double) j);//Need to pass it a double so that we can divide it to try to find the middle
+				for(int i = 0; i < stopPoint; i++) {
+					if(this.letters.charAt(i) == this.letters.charAt(j)) {
+						this.isPalindrome = true;
+						j--; //Decrement j so the end comparer back to keep up with i moving forward
+					}
+					else {
+						//They're not the same so lets set the fail point variable and break out of the loop
+						this.isPalindrome = false;
+						this.palindromeFailPoint += this.letters.charAt(i);
+						this.palindromeFailPoint += this.letters.charAt(j);
+						break;
+					}
+				}
+			} 			
+			catch (Exception e) {
 				Log.L("Failed to determine if " + this.letters + " Was a palindrome. Error message: " + e.toString());
 			}
+
 		}
-		private double GetMidPoint(String letters) {
-			double midPoint = letters.length()/2;
+		private int GetStopPoint(double endComparePosition) {
+			double midPoint = endComparePosition/2;
 			boolean notWhole = false;
+			int returnVal = 0;
 			if( midPoint % 1 == 0) {
 				notWhole = true; 
+				returnVal = (int) midPoint;
 			}
 			if(notWhole){
-				midPoint = midPoint + 0.5;
+				returnVal = (int) Math.round(midPoint);
 			}
-			return midPoint;
+			return returnVal;
 		}
 		private String StripNonLetters(String input) {
 			try {
