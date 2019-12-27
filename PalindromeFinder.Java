@@ -92,7 +92,6 @@ public class PalindromeFinder {
 			return this.isPalindrome;
 		}
 		private void CheckIfPalindrome() {
-			//Setup
 			try {
 				int j = this.letters.length()-1;//Substract 1 so we don't got out of bounds
 				int stopPoint = GetStopPoint((double) j);//Need to pass it a double so that we can divide it to try to find the middle
