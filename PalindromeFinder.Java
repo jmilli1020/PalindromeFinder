@@ -36,7 +36,7 @@ public class PalindromeFinder {
 		System.out.println("Printing all non-palindromes now:");
 		for(Word word: words) {
 			if(!word.isPalindrome) {
-				System.out.println(word.letters + " : This failed when comparing letters: " + word.palindromeFailPoint);
+				System.out.println(word.letters + " : Failed when comparing letters: " + word.palindromeFailPoint);
 			}
 		}
 	}
@@ -123,7 +123,8 @@ public class PalindromeFinder {
 			int returnVal = 0;
 			if( midPoint % 1 == 0) {
 				notWhole = true; 
-				returnVal = (int) midPoint;
+				//Adding plus 1 to midpoint so that for even length strings we can compare the inner most chars
+				returnVal = (int) midPoint + 1;
 			}
 			if(notWhole){
 				returnVal = (int) Math.round(midPoint);
