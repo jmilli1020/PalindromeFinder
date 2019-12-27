@@ -7,24 +7,28 @@ import java.util.logging.*;
 
 public class PalindromeFinder {
 	public static void main(String[] args)	{
-		//Setup		
-		Log.L("test");
-		FileReader fr = new FileReader();
-		
+		//Setup
 		//Read the text file, parse each word and create an Instance of the Word class,
 		//then store result as a Word array. Every instance of a Word is evaluated as palindrome
 		//or non palindrome within the contructor. 
+		FileReader fr = new FileReader();
 		ArrayList<Word> words = fr.LoadFile();
 
 		//Now lets sort the array.
 		try {
-			Collections.sort(words, new CustomerSortingComparator());
+			for(Word word: words)
+				Log.L(word.letters);
+			Collections.sort(words, Comparator.comparing(Word::getLetters)
+			.thenComparing(Word::getIsPalindrome));
+			Log.L("Finished sorting");
+			for(Word word: words)
+				Log.L(word.letters);
 		}
 		catch (Exception e){
 			Log.L("Failed to sort the collection: " + e.toString());
 		}
 
-
+		//Now lets write it to the console
 		//FoundFirstNonPalin is a flag that tells us when we need to
 		//print the newline character so that we split up the palindromes
 		//and the non palindromes
@@ -88,12 +92,51 @@ public class PalindromeFinder {
 			CheckIfPalindrome();
 		}
 		//Methods
+		public String getLetters() {
+			return this.letters;
+		}
+		public Boolean getIsPalindrome() {
+			return this.isPalindrome;
+		}
 		private void CheckIfPalindrome() {
+			//Setup
+			int i = 0;
+			int j = 0;
+			double stopPoint = GetMidPoint(this.letters);
+			try {
+				
 
+
+			}
+			catch(Exception e) {
+				Log.L("Failed to determine if " + this.letters + " Was a palindrome. Error message: " + e.toString());
+			}
+		}
+		private double GetMidPoint(String letters) {
+			double midPoint = letters.length()/2;
+			boolean notWhole = false;
+			if( midPoint % 1 == 0) {
+				notWhole = true; 
+			}
+			if(notWhole){
+				midPoint = midPoint + 0.5;
+			}
+			return midPoint;
 		}
 		private String StripNonLetters(String input) {
-			 
-			return input;
+			try {
+				//Split on all non alphas
+				String[] stringArray = input.split("\\W+");
+				String result = new String();
+				for(int i = 0; i < stringArray.length;i++){
+					result = result+ stringArray[i];
+				}
+				return result;
+			}
+			catch(Exception e) {
+				Log.L("Failed to strip non alphas from: " + input + "Error message: " + e.toString());
+				return input;
+			}
 		}
 	}
 
