@@ -1,20 +1,29 @@
-import java.util.Arrays;
+import java.util.ArrayList; 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Scanner;
+import java.io.*; 
+import java.util.logging.*;
 
 public class PalindromeFinder {
 	public static void main(String[] args)	{
 		//Setup		
-		Log log = new Log();
-		IO io = new IO();
+		Log.L("test");
+		FileReader fr = new FileReader();
 		
 		//Read the text file, parse each word and create an Instance of the Word class,
 		//then store result as a Word array. Every instance of a Word is evaluated as palindrome
 		//or non palindrome within the contructor. 
-		Word[] words = io.LoadFile();
+		ArrayList<Word> words = fr.LoadFile();
 
 		//Now lets sort the array.
-		
-		Arrays.sort(words, new CustomerSortingComparator());
+		try {
+			Collections.sort(words, new CustomerSortingComparator());
+		}
+		catch (Exception e){
+			Log.L("Failed to sort the collection: " + e.toString());
+		}
+
 
 		//FoundFirstNonPalin is a flag that tells us when we need to
 		//print the newline character so that we split up the palindromes
@@ -34,37 +43,40 @@ public class PalindromeFinder {
 			}
 		}
 	}
-	static class IO {
+	static class FileReader {
 		//Attributes
 		private String inputFilePath;
-		private String outputFilePath;
 
 		//Constructor
-		public IO() {
-			InitProperties();
+		public FileReader() {
+			inputFilePath = System.getProperty("user.dir");
 		}
 		//Methods
-		private void InitProperties() {
-			//If config exists lets use those settings
-
-			//Else lets use default workingDirectory
-		}
-		public Word[] LoadFile() {
+		public ArrayList<Word> LoadFile() {
+			//Setup
 			System.out.println("Loading text file...");
-			Word words[] = new Word[1];
+			ArrayList<Word> words = new ArrayList<Word>();
 			try {
-				//Fetch file contents
+				//Fetch file contents by passing a file path			
+				File file = new File(inputFilePath + "\\word-list.txt"); 
+
+				//Create a scanner to read the file
+				Scanner sc = new Scanner(file); 
+				while (sc.hasNextLine()) 
+					//Foreach line create a new Word and add it to the arrayList words
+					words.add(new Word(sc.nextLine()));
 				System.out.println("Loading text file complete");
+				sc.close();
 				return words;
 			}
 			catch (Exception e) {
 				System.out.println("Failed to load text file: " + e.getMessage());
+				words = null;
 				return words;
 			}
 
 		}
 	}
-
 	static class Word {		
 		//Attributes
 		public String letters;
@@ -77,11 +89,11 @@ public class PalindromeFinder {
 		}
 		//Methods
 		private void CheckIfPalindrome() {
-			
+
 		}
 		private String StripNonLetters(String input) {
-			//COnvert to String are so that 
-			return "";
+			 
+			return input;
 		}
 	}
 
@@ -89,27 +101,31 @@ public class PalindromeFinder {
 		
         @Override
         public int compare(Word word1, Word word2) { 
-  
-            // for comparison 
-            int letterCompare = word1.letters.compareTo(word2.letters); 
-            int isPalinCompare = word1.isPalindrome.compareTo(word2.isPalindrome); 
-  
-			// 2-level comparison using if-else block
-			//Sorts alphabetically first then on isPalindrome
-            if (letterCompare == 0) { 
-                return ((isPalinCompare == 0) ? letterCompare : isPalinCompare); 
-            } else { 
-                return letterCompare; 
-            } 
+			try	{
+				// Setup for comparison
+				int letterCompare = word1.letters.compareTo(word2.letters); 
+				int isPalinCompare = word1.isPalindrome.compareTo(word2.isPalindrome); 
+	  
+				// 2-level comparison using if-else block
+				//Sorts alphabetically first then on isPalindrome
+				if (letterCompare == 0) { 
+					return ((isPalinCompare == 0) ? letterCompare : isPalinCompare); 
+				} else { 
+					return letterCompare; 
+				} 
+			}
+			catch (Exception e) {
+				Log.L("Failed to compare: " + word1.letters + " To: " + word2.letters + "Error message: " + e.toString());
+				return 0;
+			}
+            
         } 
     } 
 
 	static class Log {
-		String logFilePath ;
-
-		public void Write(String msg) {
-			//Write
-
+		static void L(String msg) {
+			Logger logger = Logger.getLogger("PalindromeFinder");
+			logger.log(Level.INFO, msg);
 		}
 	}
 }
