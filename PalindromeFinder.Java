@@ -3,8 +3,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
 import java.io.*; 
-import java.util.logging.*;
-import java.math.*;
 
 public class PalindromeFinder {
 	public static void main(String[] args)	{
@@ -21,7 +19,7 @@ public class PalindromeFinder {
 			.thenComparing(Word::getIsPalindrome));
 		}
 		catch (Exception e){
-			Log.L("Failed to sort the collection: " + e.toString());
+			System.out.println("Failed to sort the collection: " + e.toString());
 		}
 
 		//Now lets write the palindromes to the console
@@ -113,7 +111,7 @@ public class PalindromeFinder {
 				}
 			} 			
 			catch (Exception e) {
-				Log.L("Failed to determine if " + this.letters + " Was a palindrome. Error message: " + e.toString());
+				System.out.println("Failed to determine if " + this.letters + " Was a palindrome. Error message: " + e.toString());
 			}
 
 		}
@@ -142,41 +140,9 @@ public class PalindromeFinder {
 				return result;
 			}
 			catch(Exception e) {
-				Log.L("Failed to strip non alphas from: " + input + "Error message: " + e.toString());
+				System.out.println("Failed to strip non alphas from: " + input + "Error message: " + e.toString());
 				return input;
 			}
-		}
-	}
-
-	static class CustomerSortingComparator implements Comparator<Word> {
-		
-        @Override
-        public int compare(Word word1, Word word2) { 
-			try	{
-				// Setup for comparison
-				int letterCompare = word1.letters.compareTo(word2.letters); 
-				int isPalinCompare = word1.isPalindrome.compareTo(word2.isPalindrome); 
-	  
-				// 2-level comparison using if-else block
-				//Sorts alphabetically first then on isPalindrome
-				if (letterCompare == 0) { 
-					return ((isPalinCompare == 0) ? letterCompare : isPalinCompare); 
-				} else { 
-					return letterCompare; 
-				} 
-			}
-			catch (Exception e) {
-				Log.L("Failed to compare: " + word1.letters + " To: " + word2.letters + "Error message: " + e.toString());
-				return 0;
-			}
-            
-        } 
-    } 
-
-	static class Log {
-		static void L(String msg) {
-			Logger logger = Logger.getLogger("PalindromeFinder");
-			logger.log(Level.INFO, msg);
 		}
 	}
 }
