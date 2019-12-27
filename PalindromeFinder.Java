@@ -116,15 +116,16 @@ public class PalindromeFinder {
 		}
 		private int GetStopPoint(double endComparePosition) {
 			double midPoint = endComparePosition/2;
-			boolean notWhole = false;
+			boolean notWhole = true;
 			int returnVal = 0;
 			if( midPoint % 1 == 0) {
-				notWhole = true; 
+				notWhole = false; 
 				//Adding plus 1 to midpoint so that for even length strings we can compare the inner most chars
 				returnVal = (int) midPoint + 1;
 			}
 			if(notWhole){
-				returnVal = (int) Math.round(midPoint);
+				midPoint = midPoint + 0.5;
+				returnVal = (int) midPoint;
 			}
 			return returnVal;
 		}
