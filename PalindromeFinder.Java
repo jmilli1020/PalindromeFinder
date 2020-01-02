@@ -26,7 +26,7 @@ public class PalindromeFinder {
 		System.out.println("Printing all palindromes now:");
 		for(Word word: words) {
 			if(word.isPalindrome) {
-				System.out.println(word.letters);
+				System.out.println(word.originalLetters);
 			}
 		}
 
@@ -34,7 +34,7 @@ public class PalindromeFinder {
 		System.out.println("Printing all non-palindromes now:");
 		for(Word word: words) {
 			if(!word.isPalindrome) {
-				System.out.println(word.letters + " : Failed when comparing letters: " + word.palindromeFailPoint);
+				System.out.println(word.originalLetters + " : Failed when comparing letters: " + word.palindromeFailPoint);
 			}
 		}
 	}
@@ -74,43 +74,45 @@ public class PalindromeFinder {
 	}
 	static class Word {		
 		//Attributes
-		public String letters;
+		public String originalLetters;
+		public String compareLetters;
 		public String palindromeFailPoint;
 		public Boolean isPalindrome = false;
 
 		//Constructor
 		public Word(String letters) {
-			this.letters = StripNonLetters(letters.toLowerCase());
+			this.originalLetters = letters;
+			this.compareLetters = StripNonLetters(letters.toLowerCase());
 			this.palindromeFailPoint = "";
 			CheckIfPalindrome();
 		}
 		//Methods
 		public String getLetters() {
-			return this.letters;
+			return this.compareLetters;
 		}
 		public Boolean getIsPalindrome() {
 			return this.isPalindrome;
 		}
 		private void CheckIfPalindrome() {
 			try {
-				int j = this.letters.length()-1;//Substract 1 so we don't got out of bounds
+				int j = this.compareLetters.length()-1;//Substract 1 so we don't got out of bounds
 				int stopPoint = GetStopPoint((double) j);//Need to pass it a double so that we can divide it to try to find the middle
 				for(int i = 0; i < stopPoint; i++) {
-					if(this.letters.charAt(i) == this.letters.charAt(j)) {
+					if(this.compareLetters.charAt(i) == this.compareLetters.charAt(j)) {
 						this.isPalindrome = true;
-						j--; //Decrement j so the end comparer back to keep up with i moving forward
+						j--; //Decrement j so the end comparer can keep up with i moving forward
 					}
 					else {
 						//They're not the same so lets set the fail point variable and break out of the loop
 						this.isPalindrome = false;
-						this.palindromeFailPoint += this.letters.charAt(i);
-						this.palindromeFailPoint += this.letters.charAt(j);
+						this.palindromeFailPoint += this.compareLetters.charAt(i);
+						this.palindromeFailPoint += this.compareLetters.charAt(j);
 						break;
 					}
 				}
 			} 			
 			catch (Exception e) {
-				System.out.println("Failed to determine if " + this.letters + " Was a palindrome. Error message: " + e.toString());
+				System.out.println("Failed to determine if " + this.compareLetters + " Was a palindrome. Error message: " + e.toString());
 			}
 
 		}
