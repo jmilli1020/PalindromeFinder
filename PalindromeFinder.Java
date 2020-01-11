@@ -147,9 +147,10 @@ public class PalindromeFinder {
 		}
 		private String StripRightQuotes(String input)
 		{
-			if(input.contains(("’")) {
+			if(input.contains(("’"))) {
 				input = input.replace("’", "\'");
 			}
+			return input;
 		}
 	}
 }
