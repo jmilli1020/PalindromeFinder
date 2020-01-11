@@ -1,8 +1,8 @@
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
-import java.io.*; 
+import java.io.*;
 
 public class PalindromeFinder {
 	public static void main(String[] args)	{
@@ -15,13 +15,14 @@ public class PalindromeFinder {
 
 		//Now lets sort the array.
 		try {
+			//Lambda sort
 			Collections.sort(words, Comparator.comparing(Word::getLetters)
 			.thenComparing(Word::getIsPalindrome));
 		}
 		catch (Exception e){
-			System.out.println("Failed to sort the collection: " + e.toString());
+			System.out.println("Failed to sort the collection: " + e.getCause());
 		}
-
+		
 		//Now lets write the palindromes to the console
 		System.out.println("Printing all palindromes now:");
 		for(Word word: words) {
@@ -41,10 +42,10 @@ public class PalindromeFinder {
 	static class FileReader {
 		//Attributes
 		private String inputFilePath;
-
+ 
 		//Constructor
 		public FileReader() {
-			inputFilePath = System.getProperty("user.dir");
+			inputFilePath = System.getProperty("user.dir") + "\\word-list.txt";
 		}
 		//Methods
 		public ArrayList<Word> LoadFile() {
@@ -53,7 +54,7 @@ public class PalindromeFinder {
 			ArrayList<Word> words = new ArrayList<Word>();
 			try {
 				//Fetch file contents by passing a file path			
-				File file = new File(inputFilePath + "\\word-list.txt"); 
+				File file = new File(inputFilePath);
 
 				//Create a scanner to read the file
 				Scanner sc = new Scanner(file); 
@@ -65,11 +66,10 @@ public class PalindromeFinder {
 				return words;
 			}
 			catch (Exception e) {
-				System.out.println("Failed to load text file: " + e.getMessage());
+				System.out.println("Failed to load text file: " + e.toString());
 				words = null;
 				return words;
 			}
-
 		}
 	}
 	static class Word {		
@@ -81,7 +81,7 @@ public class PalindromeFinder {
 
 		//Constructor
 		public Word(String letters) {
-			this.originalLetters = letters;
+			this.originalLetters = StripRightQuotes(letters);
 			this.compareLetters = StripNonLetters(letters.toLowerCase());
 			this.palindromeFailPoint = "";
 			CheckIfPalindrome();
@@ -95,7 +95,7 @@ public class PalindromeFinder {
 		}
 		private void CheckIfPalindrome() {
 			try {
-				int j = this.compareLetters.length()-1;//Substract 1 so we don't got out of bounds
+				int j = this.compareLetters.length()-1;//Substract 1 so we don't go out of bounds
 				int stopPoint = GetStopPoint((double) j);//Need to pass it a double so that we can divide it to try to find the middle
 				for(int i = 0; i < stopPoint; i++) {
 					if(this.compareLetters.charAt(i) == this.compareLetters.charAt(j)) {
@@ -112,9 +112,8 @@ public class PalindromeFinder {
 				}
 			} 			
 			catch (Exception e) {
-				System.out.println("Failed to determine if " + this.compareLetters + " Was a palindrome. Error message: " + e.toString());
+				System.out.println("Failed to determine if " + this.compareLetters + " Was a palindrome. Error message: " + e.getCause());
 			}
-
 		}
 		private int GetStopPoint(double endComparePosition) {
 			double midPoint = endComparePosition/2;
@@ -125,7 +124,7 @@ public class PalindromeFinder {
 				//Adding plus 1 to midpoint so that for even length strings we can compare the inner most chars
 				returnVal = (int) midPoint + 1;
 			}
-			if(notWhole){
+			if(notWhole) {
 				midPoint = midPoint + 0.5;
 				returnVal = (int) midPoint;
 			}
@@ -134,7 +133,7 @@ public class PalindromeFinder {
 		private String StripNonLetters(String input) {
 			try {
 				//Split on all non alphas
-				String[] stringArray = input.split("\\W+");
+				String[] stringArray = input.split("\\W+");//TODO: read up on why \\W+ splits on non alpha?
 				String result = new String();
 				for(int i = 0; i < stringArray.length;i++){
 					result = result+ stringArray[i];
@@ -142,8 +141,14 @@ public class PalindromeFinder {
 				return result;
 			}
 			catch(Exception e) {
-				System.out.println("Failed to strip non alphas from: " + input + "Error message: " + e.toString());
+				System.out.println("Failed to strip non alphas from: " + input + "Error message: " + e.getCause());
 				return input;
+			}
+		}
+		private String StripRightQuotes(String input)
+		{
+			if(input.contains(("’")) {
+				input = input.replace("’", "\'");
 			}
 		}
 	}
